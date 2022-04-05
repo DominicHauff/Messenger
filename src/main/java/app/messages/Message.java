@@ -1,4 +1,4 @@
-package main.java.app.messages;
+package app.messages;
 
 public record Message(String sender, String content) {
 

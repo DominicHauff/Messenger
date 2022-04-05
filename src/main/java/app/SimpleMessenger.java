@@ -1,6 +1,6 @@
-package main.java.app;
+package app;
 
-import main.java.app.messages.Message;
+import app.messages.Message;
 
 import java.util.List;
 
