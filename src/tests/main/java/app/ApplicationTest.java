@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ApplicationTest {
 
     /**
-     * This test embodied the pure sole of junit testing...
+     * This test embodies the pure soul of junit testing...
      */
     @Test
     void aTest() {
