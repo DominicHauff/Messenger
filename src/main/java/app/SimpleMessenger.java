@@ -1,6 +1,7 @@
 package app;
 
 import app.messages.Message;
+import app.util.FileManager;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public boolean create(String username, String password) {
-        return false;
+        return FileManager.createDir(PATH_TO_USER_DIRS + username);
     }
 
     @Override
