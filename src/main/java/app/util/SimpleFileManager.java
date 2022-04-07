@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
 
-public class FileManager {
+public class SimpleFileManager {
 
     public static boolean createDir(String path) {
         File newUser = new File(path);
@@ -32,7 +32,6 @@ public class FileManager {
         try {
             FileWriter fileWriter = new FileWriter(path);
             fileWriter.write(content);
-            fileWriter.close();
             return true;
         } catch (IOException e) {
             e.printStackTrace();

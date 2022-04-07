@@ -1,12 +1,18 @@
 package app;
 
+import app.database.DataBase;
 import app.messages.Message;
-import app.util.FileManager;
 
 import java.util.List;
 
 public class SimpleMessenger implements Messenger {
-    private static final String PATH_TO_USER_DIRS = "src/resources/users/";
+    private final DataBase dataBase;
+    private String loggedInUser;
+
+    public SimpleMessenger(DataBase dataBase) {
+        this.dataBase = dataBase;
+        this.loggedInUser = null;
+    }
 
     /**
      * This method provides functionality for creating a new user account for this messaging application
@@ -19,7 +25,14 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public boolean create(String username, String password) {
-        return FileManager.createDir(PATH_TO_USER_DIRS + username);
+        if (username == null || password == null) return false;
+
+        if (this.dataBase.userExists(username)) {
+            this.dataBase.addUser(username);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -30,7 +43,14 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public boolean login(String username, String password) {
-        return false;
+        if (username == null || password == null) {
+            return false;
+        }
+        if (!this.dataBase.userExists(username)) return false;
+        if (!this.dataBase.getUserPassword(username).equals(password)) return false;
+        if (this.loggedInUser != null) return false;
+        this.loggedInUser = username;
+        return true;
     }
 
     /**
@@ -38,7 +58,7 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public void logout() {
-
+        this.loggedInUser = null;
     }
 
     /**

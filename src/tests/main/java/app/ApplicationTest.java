@@ -1,5 +1,6 @@
 package app;
 
+import app.database.SimpleDatabase;
 import app.messages.Message;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ class ApplicationTest {
 
     @Test
     void basicInteraction() {
-        Messenger messenger = new SimpleMessenger();
+        Messenger messenger = new SimpleMessenger(new SimpleDatabase());
 
         assertTrue(messenger.create("lorenz", "password123"));
         assertTrue(messenger.create("dominic", "password123"));

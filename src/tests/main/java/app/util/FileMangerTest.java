@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static app.util.FileManager.*;
+import static app.util.SimpleFileManager.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -51,12 +51,14 @@ class FileMangerTest {
     @Order(4)
     void testDeleteFile() {
         assertTrue(createDir(TMP_DIR + "/clean"));
-        assertTrue(createFile(TMP_DIR + "/clean1"));
-        assertTrue(createFile(TMP_DIR + "/clean2"));
-        assertTrue(createFile(TMP_DIR + "/clean/f1"));
-        assertTrue(writeContent(TMP_DIR + "/clean/f1", "test"));
-        //assertTrue(emptyDirectory(new File(TMP_DIR)));
-        //assertEquals(0, Objects.requireNonNull(new File(TMP_DIR).listFiles()).length);
+        assertTrue(createDir(TMP_DIR + "/clean/t1"));
+        assertTrue(createDir(TMP_DIR + "/clean/t2"));
+        assertTrue(createFile(TMP_DIR + "/clean/t1/f1"));
+        assertTrue(createFile(TMP_DIR + "/clean/t1/f2"));
+        assertTrue(createFile(TMP_DIR + "/clean/t2/f1"));
+        //assertTrue(writeContent(TMP_DIR + "/clean/t1/f1", "test"));
+        assertTrue(emptyDirectory(new File(TMP_DIR)));
+        assertEquals(0, Objects.requireNonNull(new File(TMP_DIR).listFiles()).length);
     }
 
     @BeforeAll
