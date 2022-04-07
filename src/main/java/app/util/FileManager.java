@@ -3,6 +3,7 @@ package app.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.*;
 
 public class FileManager {
 
@@ -39,4 +40,21 @@ public class FileManager {
         }
     }
 
+    public static boolean emptyDirectory(File directory) {
+        if (directory == null) return false;
+        File[] subFiles;
+        if ((subFiles = directory.listFiles()) == null) return false;
+        for (File subFile : subFiles) {
+            if (subFile.isDirectory()) {
+                if (!emptyDirectory(subFile)) return false;
+            }
+            try {
+                Files.delete(subFile.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
 }
