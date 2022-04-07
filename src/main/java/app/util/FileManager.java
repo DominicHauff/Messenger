@@ -27,7 +27,7 @@ public class FileManager {
         }
     }
 
-    public boolean writeContent(String path, String content) {
+    public static boolean writeContent(String path, String content) {
         try {
             FileWriter fileWriter = new FileWriter(path);
             fileWriter.write(content);

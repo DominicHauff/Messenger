@@ -11,6 +11,7 @@ import java.util.Stack;
 import static app.util.FileManager.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FileMangerTest {
     private static final String TMP_DIR = "src/tests/resources/tmp";
 
@@ -22,14 +23,14 @@ class FileMangerTest {
         File f1 = new File("src/tests/resources/tmp/t1");
         assertTrue(f1.exists());
         assertTrue(f1.isDirectory());
-        assertEquals(0, f1.listFiles().length);
+        assertEquals(0, Objects.requireNonNull(f1.listFiles()).length);
     }
 
     @Test
     @Order(2)
-    void TestCreateFile() {
-        assertTrue(createFile("src/tests/resources/tmp/t1/password"));
-        File f1 = new File("src/tests/resources/tmp/t1");
+    void testCreateFile() {
+        assertTrue(createFile(TMP_DIR + "/t1/password"));
+        File f1 = new File(TMP_DIR + "/t1/password");
         assertTrue(f1.exists());
         assertTrue(f1.isFile());
         assertTrue(f1.canWrite());
