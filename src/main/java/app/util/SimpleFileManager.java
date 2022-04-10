@@ -1,7 +1,6 @@
 package app.util;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -30,7 +29,7 @@ public class SimpleFileManager {
             Files.createFile(fileToCreate.toPath());
             return fileToCreate.setWritable(true);
         } catch (IOException ioException) {
-            System.err.println("cannot create file '" + path + "'! Because: " + ioException);
+            System.err.println("cannot create file '" + path + "'!\n Because: " + ioException);
             return false;
         }
     }

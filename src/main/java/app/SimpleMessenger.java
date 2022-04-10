@@ -4,6 +4,7 @@ import app.database.DataBase;
 import app.messages.Message;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SimpleMessenger implements Messenger {
     private final DataBase dataBase;
@@ -27,12 +28,11 @@ public class SimpleMessenger implements Messenger {
     public boolean create(String username, String password) {
         if (username == null || password == null) return false;
 
-        if (this.dataBase.userExists(username)) {
-            this.dataBase.addUser(username);
-            return true;
-        }
+        if (this.dataBase.userExists(username)) return false;
 
-        return false;
+        this.dataBase.addUser(username);
+        this.dataBase.setUserPassword(password);
+        return true;
     }
 
     /**
@@ -70,7 +70,13 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public boolean send(String receiver, String message) {
-        return false;
+        if (receiver == null || message == null) {
+            return false;
+        }
+        if (!this.dataBase.userExists(receiver)) return false;
+        if (this.loggedInUser == null) return false;
+        this.dataBase.getUserMailbox(receiver).receive(new Message(this.loggedInUser, message, false));
+        return true;
     }
 
     /**
@@ -80,7 +86,12 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public void delete(int index) {
-
+        if (this.loggedInUser == null) return;
+        try {
+            this.dataBase.getUserMailbox(this.loggedInUser).delete(index);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -90,7 +101,8 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public List<Message> list() {
-        return null;
+        if (this.loggedInUser == null) return null;
+        return this.dataBase.getUserMailbox(this.loggedInUser).getAll();
     }
 
     /**
@@ -100,7 +112,9 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public List<Message> listUnread() {
-        return null;
+        if (this.loggedInUser == null) return null;
+        return this.dataBase.getUserMailbox(this.loggedInUser).getAll().stream()
+                .filter(Message::read).collect(Collectors.toList());
     }
 
     /**
@@ -111,6 +125,12 @@ public class SimpleMessenger implements Messenger {
      */
     @Override
     public Message read(int index) {
-        return null;
+        if (this.loggedInUser == null) return null;
+        try {
+            return this.dataBase.getUserMailbox(this.loggedInUser).get(index);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
