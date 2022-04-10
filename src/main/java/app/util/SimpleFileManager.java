@@ -8,11 +8,17 @@ import java.nio.file.*;
 public class SimpleFileManager {
 
     public static boolean createDir(String path) {
-        File newUser = new File(path);
-        if (newUser.exists()) {
+        File newDir = new File(path);
+        if (newDir.exists()) {
             return false;
         }
-        return newUser.mkdir();
+        try {
+            Files.createDirectory(newDir.toPath());
+            return true;
+        } catch (IOException ioException) {
+            System.err.println("cannot create directory '" + path + "'! Because: " + ioException);
+            return false;
+        }
     }
 
     public static boolean createFile(String path) {
@@ -21,20 +27,24 @@ public class SimpleFileManager {
             return false;
         }
         try {
-            return fileToCreate.createNewFile() && fileToCreate.setWritable(true);
-        } catch (IOException e) {
-            e.printStackTrace();
+            Files.createFile(fileToCreate.toPath());
+            return fileToCreate.setWritable(true);
+        } catch (IOException ioException) {
+            System.err.println("cannot create file '" + path + "'! Because: " + ioException);
             return false;
         }
     }
 
     public static boolean writeContent(String path, String content) {
+        File fileToWrite = new File(path);
+        if (!fileToWrite.exists() || !fileToWrite.canWrite()) {
+            return false;
+        }
         try {
-            FileWriter fileWriter = new FileWriter(path);
-            fileWriter.write(content);
+            Files.writeString(fileToWrite.toPath(), content);
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            System.err.println("cannot write to file '" + path + "'! Because: " + ioException);
             return false;
         }
     }
@@ -49,8 +59,8 @@ public class SimpleFileManager {
             }
             try {
                 Files.delete(subFile.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ioException) {
+                System.err.println("cannot delete file '" + subFile.getPath() + "'! Because: " + ioException);
                 return false;
             }
         }
