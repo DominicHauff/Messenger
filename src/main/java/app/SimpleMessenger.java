@@ -31,7 +31,7 @@ public class SimpleMessenger implements Messenger {
         if (this.dataBase.userExists(username)) return false;
 
         this.dataBase.addUser(username);
-        this.dataBase.setUserPassword(password);
+        this.dataBase.setUserPassword(username, password);
         return true;
     }
 
@@ -64,7 +64,7 @@ public class SimpleMessenger implements Messenger {
     /**
      * This method can be used to send messages to other users.
      *
-     * @param receiver the user that shall receive this method
+     * @param receiver the user that shall receive this message
      * @param message the message to send as a string
      * @return {@code true} if the message was transferred successfully, {@code false} else
      */

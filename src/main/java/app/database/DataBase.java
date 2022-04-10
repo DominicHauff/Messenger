@@ -1,5 +1,6 @@
 package app.database;
 
+import app.messages.Mailbox;
 import app.messages.Message;
 
 import java.util.List;
@@ -14,8 +15,8 @@ public interface DataBase {
 
     String getUserPassword(String username);
 
-    void setUserPassword(String username);
+    void setUserPassword(String username, String password);
 
-    List<Message> getUserMailbox(String username);
+    Mailbox getUserMailbox(String username);
 
 }

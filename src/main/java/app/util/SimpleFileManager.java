@@ -20,6 +20,13 @@ public class SimpleFileManager {
         }
     }
 
+    public static File getOrCreateFile(String path) {
+        File file = new File(path);
+        if (file.exists()) return file;
+        if (!createFile(path)) return null;
+        return file;
+    }
+
     public static boolean createFile(String path) {
         File fileToCreate = new File(path);
         if (fileToCreate.exists()) {
@@ -30,6 +37,21 @@ public class SimpleFileManager {
             return fileToCreate.setWritable(true);
         } catch (IOException ioException) {
             System.err.println("cannot create file '" + path + "'!\n Because: " + ioException);
+            return false;
+        }
+    }
+
+    public static boolean deleteFile(String path) {
+        File fileToDelete = new File(path);
+        if (!fileToDelete.exists()) {
+            System.err.println("cannot delete file " + path);
+            return false;
+        }
+        try {
+            Files.delete(fileToDelete.toPath());
+            return true;
+        } catch (IOException ioException) {
+            System.err.println("cannot delete file '" + path + "'! Because: " + ioException);
             return false;
         }
     }

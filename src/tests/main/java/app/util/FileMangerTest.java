@@ -68,7 +68,7 @@ class FileMangerTest {
 
     @Test
     @Order(4)
-    void testDeleteFile() {
+    void testEmptyDirectory() {
         String testDir = pathToTmpDir + "/testDir";
         File file = new File(testDir);
         assertAll(
@@ -80,6 +80,18 @@ class FileMangerTest {
                 () -> assertTrue(writeContent(testDir + "/d1/f1", "test")),
                 () -> assertTrue(emptyDirectory(file)),
                 () -> assertEquals(0, Objects.requireNonNull(file.listFiles()).length)
+        );
+    }
+
+    @Test
+    void testDeleteFile() {
+        String path = pathToTmpDir + "/delete";
+        assertAll(
+                () -> assertTrue(createFile(path)),
+                () -> assertTrue(new File(path).exists()),
+                () -> assertTrue(deleteFile(path)),
+                () -> assertFalse(new File(path).exists()),
+                () -> assertFalse(deleteFile(path))
         );
     }
 
