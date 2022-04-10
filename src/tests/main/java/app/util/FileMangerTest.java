@@ -1,69 +1,91 @@
 package app.util;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Objects;
-import java.util.Scanner;
 
 import static app.util.SimpleFileManager.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FileMangerTest {
-    private static final String TMP_DIR = "src/tests/resources/tmp";
+
+    @TempDir
+    static File tmpDir;
+    static String pathToTmpDir;
+
+    @BeforeAll
+    static void init() {
+        System.out.println("-".repeat(40));
+        System.out.println("running testfile: " + FileMangerTest.class.getSimpleName());
+        pathToTmpDir = tmpDir.getPath();
+        System.out.printf("path to tmpDir: %s%n", pathToTmpDir);
+    }
 
     @Test
     @Order(1)
     void testCreateDir() {
-        assertTrue(createDir(TMP_DIR + "/t1"));
-        File f1 = new File("src/tests/resources/tmp/t1");
+        String pathToTestDir = pathToTmpDir + "/t1";
+        assertTrue(createDir(pathToTestDir));
+        File f1 = new File(pathToTestDir);
         assertTrue(f1.exists());
         assertTrue(f1.isDirectory());
         assertEquals(0, Objects.requireNonNull(f1.listFiles()).length);
+        System.out.println("directory /t1 was created successfully");
     }
 
     @Test
     @Order(2)
     void testCreateFile() {
-        assertTrue(createFile(TMP_DIR + "/t1/password"));
-        File f1 = new File(TMP_DIR + "/t1/password");
+        assertTrue(createFile(pathToTmpDir + "/t1/password"));
+        File f1 = new File(pathToTmpDir + "/t1/password");
         assertTrue(f1.exists());
         assertTrue(f1.isFile());
         assertTrue(f1.canRead());
         assertTrue(f1.canWrite());
+        System.out.println("file ~/t1/password was created successfully");
     }
 
     @Test
     @Order(3)
-    void testWriteContent() throws FileNotFoundException {
-        assertTrue(writeContent(TMP_DIR + "/t1/password", "test string"));
+    void testWriteContent() {
+        assertTrue(writeContent(pathToTmpDir + "/t1/password", "test string"));
 
-        File file = new File(TMP_DIR + "/t1/password");
+        File file = new File(pathToTmpDir + "/t1/password");
         assertTrue(file.exists());
 
-        Scanner scanner = new Scanner(file);
-        assertEquals("test string", scanner.nextLine());
+        assertDoesNotThrow(() -> {
+            List<String> content = Files.readAllLines(file.toPath());
+            assertEquals(1, content.size(), "there should only be one line in the file");
+            assertEquals("test string", content.get(0), "file content should be 'test string'");
+        }, "reading from file /t1/password should not throw");
+        System.out.println("write to file ~/t1/password successfully");
     }
 
     @Test
     @Order(4)
     void testDeleteFile() {
-        assertTrue(createDir(TMP_DIR + "/clean"));
-        assertTrue(createDir(TMP_DIR + "/clean/t1"));
-        assertTrue(createDir(TMP_DIR + "/clean/t2"));
-        assertTrue(createFile(TMP_DIR + "/clean/t1/f1"));
-        assertTrue(createFile(TMP_DIR + "/clean/t1/f2"));
-        assertTrue(createFile(TMP_DIR + "/clean/t2/f1"));
-        //assertTrue(writeContent(TMP_DIR + "/clean/t1/f1", "test"));
-        assertTrue(emptyDirectory(new File(TMP_DIR)));
-        assertEquals(0, Objects.requireNonNull(new File(TMP_DIR).listFiles()).length);
+        String testDir = pathToTmpDir + "/testDir";
+        File file = new File(testDir);
+        assertAll(
+                () -> assertTrue(createDir(testDir)),
+                () -> assertTrue(createFile(testDir + "/f1")),
+                () -> assertTrue(createFile(testDir + "/f2")),
+                () -> assertTrue(createDir(testDir + "/d1")),
+                () -> assertTrue(createFile(testDir + "/d1/f1")),
+                () -> assertTrue(writeContent(testDir + "/d1/f1", "test")),
+                () -> assertTrue(emptyDirectory(file)),
+                () -> assertEquals(0, Objects.requireNonNull(file.listFiles()).length)
+        );
     }
 
     @BeforeAll
     @Test
     static void clean() {
-        emptyDirectory(new File(TMP_DIR));
+        emptyDirectory(new File(pathToTmpDir));
     }
 }
