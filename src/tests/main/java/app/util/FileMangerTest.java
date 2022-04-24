@@ -21,7 +21,7 @@ class FileMangerTest {
     @BeforeAll
     static void init() {
         System.out.println("-".repeat(40));
-        System.out.println("running testfile: " + FileMangerTest.class.getSimpleName());
+        System.out.println("running test file: " + FileMangerTest.class.getSimpleName());
         pathToTmpDir = tmpDir.getPath();
         System.out.printf("path to tmpDir: %s%n", pathToTmpDir);
     }

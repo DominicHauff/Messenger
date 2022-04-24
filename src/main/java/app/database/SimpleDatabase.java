@@ -4,10 +4,12 @@ import app.messages.Mailbox;
 import app.util.SimpleFileManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class SimpleDatabase implements DataBase {
 
@@ -55,12 +57,20 @@ public class SimpleDatabase implements DataBase {
 
     @Override
     public String getUserPassword(String username) {
-        return null;
+        if (!this.userExists(username)) return null;
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new File(DEFAULT_USER_DIR + "/" + username + "/password"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return scanner.nextLine();
     }
 
     @Override
     public void setUserPassword(String username, String password) {
-        File userDir = SimpleFileManager.getOrCreateFile(this.usersDir + "/" + username);
+        File userDir = SimpleFileManager.getOrCreateFile(this.usersDir + "/" + username + "/password");
         if (userDir == null) throw new IllegalStateException();
         boolean success = SimpleFileManager.writeContent(userDir.getPath(), password);
         if (!success) throw new IllegalStateException();
@@ -68,6 +78,7 @@ public class SimpleDatabase implements DataBase {
 
     @Override
     public Mailbox getUserMailbox(String username) {
+
         return null;
     }
 }

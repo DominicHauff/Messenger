@@ -3,6 +3,7 @@ package app;
 import app.database.DataBase;
 import app.messages.Message;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,8 @@ public class SimpleMessenger implements Messenger {
             return false;
         }
         if (!this.dataBase.userExists(username)) return false;
-        if (!this.dataBase.getUserPassword(username).equals(password)) return false;
+        String setPassword = this.dataBase.getUserPassword(username);
+        if (!setPassword.equals(password)) return false;
         if (this.loggedInUser != null) return false;
         this.loggedInUser = username;
         return true;
@@ -75,7 +77,7 @@ public class SimpleMessenger implements Messenger {
         }
         if (!this.dataBase.userExists(receiver)) return false;
         if (this.loggedInUser == null) return false;
-        this.dataBase.getUserMailbox(receiver).receive(new Message(this.loggedInUser, message, false));
+        this.dataBase.getUserMailbox(receiver).receive(new Message(LocalDateTime.now(), this.loggedInUser, message, false));
         return true;
     }
 
