@@ -1,5 +1,6 @@
 package app.database;
 
+import app.SimpleMessenger;
 import app.messages.Mailbox;
 import app.messages.SimpleMailbox;
 import app.util.SimpleFileManager;
@@ -44,6 +45,7 @@ public class SimpleDatabase implements DataBase {
         if (!SimpleFileManager.createDir(usersDir.getPath() + "/" + username)) {
             throw new IllegalStateException();
         }
+        SimpleFileManager.createDir(usersDir.getPath() + "/" + username + "/mailbox");
     }
 
     @Override
