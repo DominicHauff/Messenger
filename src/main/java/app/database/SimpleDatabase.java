@@ -1,6 +1,7 @@
 package app.database;
 
 import app.messages.Mailbox;
+import app.messages.SimpleMailbox;
 import app.util.SimpleFileManager;
 
 import java.io.File;
@@ -22,7 +23,7 @@ public class SimpleDatabase implements DataBase {
             try {
                 Files.createDirectory(usersDir.toPath());
             } catch (IOException e) {
-                System.err.println("cannot create directory ~/resources/users");
+                System.err.println("cannot create directory " + pathToUsersDir + "because: " + e);
                 throw new IllegalStateException();
             }
         }
@@ -48,8 +49,8 @@ public class SimpleDatabase implements DataBase {
     @Override
     public void deleteUser(String username) {
         File file = new File(usersDir.getPath() + "/" + username);
-        boolean deleteDir = SimpleFileManager.deleteFile(file.getPath());
         boolean emptyDir = SimpleFileManager.emptyDirectory(file);
+        boolean deleteDir = SimpleFileManager.deleteFile(file.getPath());
         if (!(emptyDir && deleteDir)) {
             throw new IllegalStateException();
         }
@@ -57,28 +58,31 @@ public class SimpleDatabase implements DataBase {
 
     @Override
     public String getUserPassword(String username) {
-        if (!this.userExists(username)) return null;
         Scanner scanner = null;
         try {
-            scanner = new Scanner(new File(DEFAULT_USER_DIR + "/" + username + "/password"));
+            scanner = new Scanner(new File(usersDir.getPath() + "/" + username + "/password"));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.err.println("password is not set yet (or user does not exist xD)");
             return null;
         }
-        return scanner.nextLine();
+        String password = scanner.nextLine();
+        scanner.close();
+        return password;
     }
 
     @Override
     public void setUserPassword(String username, String password) {
-        File userDir = SimpleFileManager.getOrCreateFile(this.usersDir + "/" + username + "/password");
-        if (userDir == null) throw new IllegalStateException();
-        boolean success = SimpleFileManager.writeContent(userDir.getPath(), password);
+        File passwordFile = SimpleFileManager.getOrCreateFile(this.usersDir + "/" + username + "/password");
+        if (passwordFile == null) throw new IllegalStateException();
+        boolean success = SimpleFileManager.writeContent(passwordFile.getPath(), password);
         if (!success) throw new IllegalStateException();
     }
 
     @Override
     public Mailbox getUserMailbox(String username) {
-
-        return null;
+        if (!this.userExists(username)) return null;
+        File mailbox = SimpleFileManager.getOrCreateFile(this.usersDir.getPath() + "/" + username + "/mailbox");
+        if (mailbox == null) return null;
+        return new SimpleMailbox(mailbox);
     }
 }

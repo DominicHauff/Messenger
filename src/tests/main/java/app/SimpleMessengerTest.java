@@ -1,6 +1,7 @@
 package app;
 
 import app.database.SimpleDatabase;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,6 +10,7 @@ class SimpleMessengerTest {
     SimpleMessenger simpleMessenger = new SimpleMessenger(new SimpleDatabase());
 
     @Test
+    @Disabled
     void createUsers() {
         assertAll(
                 () -> assertTrue(simpleMessenger.create("lorenz", "123")),
